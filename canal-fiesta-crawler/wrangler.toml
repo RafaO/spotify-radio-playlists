@@ -1,0 +1,6 @@
+name = "canal-fiesta-crawler"
+main = "src/index.ts"
+compatibility_date = "2022-11-13"
+
+[triggers]
+crons = [ "1 * * * *" ]
