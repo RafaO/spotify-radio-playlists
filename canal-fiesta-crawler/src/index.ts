@@ -1,4 +1,5 @@
 import { CanalFiestaScraper } from "./scrapper";
+import { SpotifyClient } from "./spotifyCient";
 
 /**
  * Welcome to Cloudflare Workers! This is your first scheduled worker.
@@ -30,6 +31,9 @@ export default {
 		ctx: ExecutionContext
 	): Promise<void> {
 		const scraper = new CanalFiestaScraper();
-		await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
+		const searchStrings = await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
+
+		const spotifyApi = new SpotifyClient(env.AUTH_TOKEN);
+		await spotifyApi.searchSongs(searchStrings);
 	},
 };
