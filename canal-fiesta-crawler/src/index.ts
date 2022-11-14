@@ -1,3 +1,5 @@
+import { CanalFiestaScraper } from "./scrapper";
+
 /**
  * Welcome to Cloudflare Workers! This is your first scheduled worker.
  *
@@ -27,6 +29,7 @@ export default {
 		env: Env,
 		ctx: ExecutionContext
 	): Promise<void> {
-		console.log(`Hello World!`);
+		const scraper = new CanalFiestaScraper();
+		await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
 	},
 };
