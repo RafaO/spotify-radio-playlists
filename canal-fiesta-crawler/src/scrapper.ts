@@ -9,7 +9,7 @@ export class CanalFiestaScraper {
         $("div.textoNoticia.top20 > table > tbody > tr > td > table > tbody").children().each((_index, listRow) => {
             strings.push($(listRow).children().slice(-2).map((_index, cell) => {
                 return $(cell).text().trim();
-            }).toArray().join(', '));
+            }).toArray().reverse().join(', '));
         });
         return strings;
     }
