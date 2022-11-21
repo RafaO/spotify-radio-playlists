@@ -1,5 +1,6 @@
 import { CanalFiestaScraper } from "./scrapper";
 import { SpotifyClient } from "./spotifyCient";
+import { SpotifyAuth } from "./spotifyAuth";
 
 /**
  * Welcome to Cloudflare Workers! This is your first scheduled worker.
@@ -30,10 +31,14 @@ export default {
 		env: Env,
 		ctx: ExecutionContext
 	): Promise<void> {
+
+		const spotifyAuth = new SpotifyAuth(env.REFRESH_TOKEN, env.CLIENT_ID, env.CLIENT_SECRET);
+		const code = await spotifyAuth.getAccessToken();
+		
 		const scraper = new CanalFiestaScraper();
 		const searchStrings = await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
 
-		const spotifyApi = new SpotifyClient(env.AUTH_TOKEN);
+		const spotifyApi = new SpotifyClient(code);
 		await spotifyApi.searchSongs(searchStrings);
 	},
 };
