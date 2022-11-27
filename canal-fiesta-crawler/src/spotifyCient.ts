@@ -6,7 +6,7 @@ export class SpotifyClient {
         this._authToken = authToken;
     }
 
-    async searchSongs(searchStrings: String[]) {        
+    async searchSongs(searchStrings: String[]): Promise<String[]> {        
 
         const url = "https://api.spotify.com/v1/search?limit=1&type=track"
 
@@ -28,7 +28,8 @@ export class SpotifyClient {
                 .then(result => strings.push(result['tracks']['items'][0].uri))
                 .catch(error => console.log('error', error));
         }
-        this.addSongsToPlaylist(strings.join(','));
+
+        return strings;
     }
 
     async addSongsToPlaylist(songsIds: String) {

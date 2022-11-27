@@ -39,6 +39,7 @@ export default {
 		const searchStrings = await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
 
 		const spotifyApi = new SpotifyClient(code);
-		await spotifyApi.searchSongs(searchStrings);
+		const songIds = await spotifyApi.searchSongs(searchStrings);
+		spotifyApi.addSongsToPlaylist(songIds.join(','));
 	},
 };
