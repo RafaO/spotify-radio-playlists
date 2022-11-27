@@ -33,7 +33,7 @@ export class SpotifyClient {
     }
 
     async addSongsToPlaylist(songsIds: String) {
-        const canalFiestaPlaylistUri = "0zAkuuNspqWamgwJsIGjIk";
+        const canalFiestaPlaylistUri = "1o5FGy6wRTST1kinYXq9e0";
         
         const url = `https://api.spotify.com/v1/playlists/${canalFiestaPlaylistUri}/tracks?uris=${songsIds}`
 
