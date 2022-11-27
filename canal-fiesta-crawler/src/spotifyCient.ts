@@ -22,7 +22,7 @@ export class SpotifyClient {
 
         const strings = new Array();
 
-        for (const element of searchStrings.slice(0,20)) {
+        for (const element of searchStrings.slice(0,40)) {
             await fetch(`${url}&q=${encodeURIComponent(element.toString())}`, requestOptions)
                 .then(response => response.json())
                 .then(result => strings.push(result['tracks']['items'][0].uri))
