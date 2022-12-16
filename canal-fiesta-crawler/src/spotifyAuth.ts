@@ -28,7 +28,9 @@ export class SpotifyAuth {
 		};
 
         try {
+            console.log("getting access token");
             const response = await (await fetch("https://accounts.spotify.com/api/token", requestOptions)).json();
+            console.log(response);
             return response['access_token'];
         } catch (e) {
             console.log(e)
