@@ -1,6 +1,7 @@
 import { CanalFiestaScraper } from "./scrapper";
 import { SpotifyClient } from "./spotifyCient";
 import { SpotifyAuth } from "./spotifyAuth";
+import { Toucan } from 'toucan-js';
 
 /**
  * Welcome to Cloudflare Workers! This is your first scheduled worker.
@@ -25,13 +26,26 @@ export interface Env {
 	// MY_BUCKET: R2Bucket;
 }
 
+let _sentry: Toucan;
+
+export function sentry(): Toucan {
+	return _sentry;
+}
+
 export default {
 	async scheduled(
 		controller: ScheduledController,
 		env: Env,
 		ctx: ExecutionContext
 	): Promise<void> {
-		console.log("worker starting");
+
+		_sentry = new Toucan({
+			dsn: env.SENTRY_DSN,
+			context: ctx,
+			environment: "spotify-canal-fiesta",
+		  });
+
+		  _sentry.captureMessage("worker starting");
 
 		const spotifyAuth = new SpotifyAuth(env.REFRESH_TOKEN, env.CLIENT_ID, env.CLIENT_SECRET);
 		const code = await spotifyAuth.getAccessToken();

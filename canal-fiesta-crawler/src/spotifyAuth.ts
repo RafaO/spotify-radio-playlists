@@ -1,3 +1,5 @@
+import { sentry } from './index';
+
 export class SpotifyAuth {
 
     private _refreshToken: string;
@@ -28,11 +30,13 @@ export class SpotifyAuth {
 		};
 
         try {
+            sentry().captureMessage("getting access token");
             console.log("getting access token");
             const response = await (await fetch("https://accounts.spotify.com/api/token", requestOptions)).json();
             console.log(response);
             return response['access_token'];
         } catch (e) {
+            sentry().captureException(e);
             console.log(e)
             return null;
         }

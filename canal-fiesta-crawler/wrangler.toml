@@ -4,3 +4,6 @@ compatibility_date = "2022-11-13"
 
 [triggers]
 crons = [ "0 11 * * sun" ]
+
+[vars]
+SENTRY_DSN = "https://e56f764a63c542eab572afc1bc42eaf6@o4504338505990144.ingest.sentry.io/4504338508087296"
