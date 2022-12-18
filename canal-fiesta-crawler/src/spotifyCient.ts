@@ -1,3 +1,5 @@
+import { sentry } from ".";
+
 export class SpotifyClient {
 
     private _authToken: string;
@@ -26,7 +28,10 @@ export class SpotifyClient {
             await fetch(`${url}&q=${encodeURIComponent(element.toString())}`, requestOptions)
                 .then(response => response.json())
                 .then(result => strings.push(result['tracks']['items'][0].uri))
-                .catch(error => console.log('error', error));
+                .catch(error => {
+                    console.log('error', error);
+                    sentry().captureException(error);
+                });
         }
 
         return strings;
@@ -51,6 +56,9 @@ export class SpotifyClient {
               })
         };
 
-        fetch(`${url}`, requestOptions).catch(error => console.log('error', error));
+        fetch(`${url}`, requestOptions).catch(error => {
+            console.log('error', error);
+            sentry().captureException(error);
+        });
     }
 }
