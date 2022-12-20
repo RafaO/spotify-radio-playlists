@@ -40,22 +40,26 @@ export default {
 
 		const spotifyAuth = new SpotifyAuth(env.REFRESH_TOKEN, env.CLIENT_ID, env.CLIENT_SECRET);
 		const code = await spotifyAuth.getAccessToken();
-		
-		Logger.debug("access token received");
 
-		const scraper = new CanalFiestaScraper();
-		const searchStrings = await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
+		if (code != null) {
+			Logger.debug("access token received");
 
-		Logger.debug("search strings received");
-
-		const spotifyApi = new SpotifyClient(code);
-		const songIds = await spotifyApi.searchSongs(searchStrings);
-
-		Logger.debug("song ids received");
-		Logger.debug(songIds);
-		
-		spotifyApi.addSongsToPlaylist(songIds.join(','));
-
-		Logger.debug("songs added to playlist - finishing");
+			const scraper = new CanalFiestaScraper();
+			const searchStrings = await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
+	
+			Logger.debug("search strings received");
+	
+			const spotifyApi = new SpotifyClient(code);
+			const songIds = await spotifyApi.searchSongs(searchStrings);
+	
+			Logger.debug("song ids received");
+			Logger.debug(songIds);
+	
+			spotifyApi.addSongsToPlaylist(songIds.join(','));
+	
+			Logger.debug("songs added to playlist - finishing");
+		} else {
+			Logger.error("access code is null");
+		}
 	},
 };

@@ -2,9 +2,9 @@ import Logger from "js-logger";
 
 export class SpotifyClient {
 
-    private _authToken: string;
+    private _authToken: String;
  
-    constructor(authToken: string) {
+    constructor(authToken: String) {
         this._authToken = authToken;
     }
 
