@@ -1,4 +1,4 @@
-import { sentry } from './index';
+import Logger from "js-logger";
 
 export class SpotifyAuth {
 
@@ -30,14 +30,12 @@ export class SpotifyAuth {
 		};
 
         try {
-            sentry().captureMessage("getting access token");
-            console.log("getting access token");
+            Logger.debug("getting access token");
             const response = await (await fetch("https://accounts.spotify.com/api/token", requestOptions)).json();
-            console.log(response);
+            Logger.debug(response);
             return response['access_token'];
         } catch (e) {
-            sentry().captureException(e);
-            console.log(e)
+            Logger.error(e);
             return null;
         }
     }

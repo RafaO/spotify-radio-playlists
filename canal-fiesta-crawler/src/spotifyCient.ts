@@ -1,4 +1,4 @@
-import { sentry } from ".";
+import Logger from "js-logger";
 
 export class SpotifyClient {
 
@@ -29,8 +29,7 @@ export class SpotifyClient {
                 .then(response => response.json())
                 .then(result => strings.push(result['tracks']['items'][0].uri))
                 .catch(error => {
-                    console.log('error', error);
-                    sentry().captureException(error);
+                    Logger.error(error);
                 });
         }
 
@@ -57,8 +56,7 @@ export class SpotifyClient {
         };
 
         fetch(`${url}`, requestOptions).catch(error => {
-            console.log('error', error);
-            sentry().captureException(error);
+            Logger.error(error);
         });
     }
 }

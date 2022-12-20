@@ -1,7 +1,8 @@
 import { CanalFiestaScraper } from "./scrapper";
 import { SpotifyClient } from "./spotifyCient";
 import { SpotifyAuth } from "./spotifyAuth";
-import { Toucan } from 'toucan-js';
+import Logger from "js-logger";
+import { initLogger } from "./logging";
 
 /**
  * Welcome to Cloudflare Workers! This is your first scheduled worker.
@@ -26,12 +27,6 @@ export interface Env {
 	// MY_BUCKET: R2Bucket;
 }
 
-let _sentry: Toucan;
-
-export function sentry(): Toucan {
-	return _sentry;
-}
-
 export default {
 	async scheduled(
 		controller: ScheduledController,
@@ -39,35 +34,28 @@ export default {
 		ctx: ExecutionContext
 	): Promise<void> {
 
-		_sentry = new Toucan({
-			dsn: env.SENTRY_DSN,
-			context: ctx,
-			environment: "spotify-canal-fiesta",
-		  });
+		initLogger(env.SENTRY_DSN, ctx);
 
-		  _sentry.captureMessage("worker starting");
+		Logger.debug("worker starting");
 
 		const spotifyAuth = new SpotifyAuth(env.REFRESH_TOKEN, env.CLIENT_ID, env.CLIENT_SECRET);
 		const code = await spotifyAuth.getAccessToken();
 		
-		_sentry.captureMessage("access token received");
+		Logger.debug("access token received");
 
 		const scraper = new CanalFiestaScraper();
 		const searchStrings = await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
 
-		console.log(searchStrings);
-		_sentry.captureMessage("search strings received");
+		Logger.debug("search strings received");
 
 		const spotifyApi = new SpotifyClient(code);
 		const songIds = await spotifyApi.searchSongs(searchStrings);
 
-		_sentry.captureMessage("song ids received");
-
-		console.log(songIds);
+		Logger.debug("song ids received");
+		Logger.debug(songIds);
+		
 		spotifyApi.addSongsToPlaylist(songIds.join(','));
 
-		_sentry.captureMessage("songs added to playlist");
-
-		console.log("finishing")
+		Logger.debug("songs added to playlist - finishing");
 	},
 };
