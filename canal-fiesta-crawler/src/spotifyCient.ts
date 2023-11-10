@@ -55,8 +55,11 @@ export class SpotifyClient {
               })
         };
 
-        fetch(`${url}`, requestOptions).catch(error => {
+        try {
+            const result = await fetch(`${url}`, requestOptions);
+            Logger.debug(`spotify api added songs status code: ${result.status}`);
+          } catch (error) {
             Logger.error(error);
-        });
+        }
     }
 }

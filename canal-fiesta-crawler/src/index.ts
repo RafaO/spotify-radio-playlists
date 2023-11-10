@@ -55,7 +55,7 @@ export default {
 			Logger.debug("song ids received");
 			Logger.debug(songIds);
 	
-			spotifyApi.addSongsToPlaylist(songIds.join(','));
+			await spotifyApi.addSongsToPlaylist(songIds.join(','));
 	
 			Logger.debug("songs added to playlist - finishing");
 		} else {
