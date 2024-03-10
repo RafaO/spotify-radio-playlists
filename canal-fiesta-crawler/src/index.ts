@@ -3,6 +3,7 @@ import { SpotifyClient } from "./spotifyCient";
 import { SpotifyAuth } from "./spotifyAuth";
 import Logger from "js-logger";
 import { initLogger } from "./logging";
+import { SearchRepository } from "./searchRepository";
 
 /**
  * Welcome to Cloudflare Workers! This is your first scheduled worker.
@@ -18,13 +19,7 @@ import { initLogger } from "./logging";
 
 export interface Env {
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
-	// MY_KV_NAMESPACE: KVNamespace;
-	//
-	// Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
-	// MY_DURABLE_OBJECT: DurableObjectNamespace;
-	//
-	// Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
-	// MY_BUCKET: R2Bucket;
+	SONG_IDS: KVNamespace;
 }
 
 export default {
@@ -46,17 +41,19 @@ export default {
 
 			const scraper = new CanalFiestaScraper();
 			const searchStrings = await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
-	
+
 			Logger.debug("search strings received");
-	
+
 			const spotifyApi = new SpotifyClient(code);
-			const songIds = await spotifyApi.searchSongs(searchStrings);
-	
+
+			let searchRepository = new SearchRepository(spotifyApi, env.SONG_IDS);
+			let songIds = await searchRepository.getSongIds(searchStrings);
+
 			Logger.debug("song ids received");
 			Logger.debug(songIds);
-	
+
 			await spotifyApi.addSongsToPlaylist(songIds.join(','));
-	
+
 			Logger.debug("songs added to playlist - finishing");
 		} else {
 			Logger.error("access code is null");

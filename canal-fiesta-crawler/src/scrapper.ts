@@ -1,7 +1,7 @@
 import cheerio from 'cheerio';
 
 export class CanalFiestaScraper {
-    async scrapeList(url: string): Promise<String[]> {
+    async scrapeList(url: string): Promise<string[]> {
         const response = await (await fetch(url)).text();
         const $ = cheerio.load(response);
 
