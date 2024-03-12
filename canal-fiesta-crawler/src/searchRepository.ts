@@ -49,4 +49,13 @@ export class SearchRepository {
 
         return songId;
     }
+
+    async cleanUpKV(keysToKeep: string[]): Promise<void> {
+        const kvKeys = (await this.kv.list()).keys;
+
+        const keysToDelete = kvKeys.filter(key => !keysToKeep.includes(key.name));
+        Logger.debug(keysToDelete.map(key => key.name));
+
+        await Promise.all(keysToDelete.map(key => this.kv.delete(key.name)));
+    }
 }

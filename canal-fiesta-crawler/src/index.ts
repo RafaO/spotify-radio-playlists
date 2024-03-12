@@ -30,7 +30,6 @@ export default {
 	): Promise<void> {
 
 		initLogger(env.SENTRY_DSN, ctx);
-
 		Logger.debug("worker starting");
 
 		const spotifyAuth = new SpotifyAuth(env.REFRESH_TOKEN, env.CLIENT_ID, env.CLIENT_SECRET);
@@ -40,13 +39,15 @@ export default {
 			Logger.debug("access token received");
 
 			const scraper = new CanalFiestaScraper();
-			const searchStrings = await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
+			const spotifyApi = new SpotifyClient(code);
+			const searchRepository = new SearchRepository(spotifyApi, env.SONG_IDS);
 
+			const searchStrings = await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
 			Logger.debug("search strings received");
 
-			const spotifyApi = new SpotifyClient(code);
+			await searchRepository.cleanUpKV(searchStrings);
+			Logger.debug("kv cleaned up");
 
-			let searchRepository = new SearchRepository(spotifyApi, env.SONG_IDS);
 			let songIds = await searchRepository.getSongIds(searchStrings);
 
 			Logger.debug("song ids received");
