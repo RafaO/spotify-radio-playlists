@@ -43,7 +43,12 @@ export default {
 			const searchRepository = new SearchRepository(spotifyApi, env.SONG_IDS);
 
 			const searchStrings = await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
+			if (searchStrings.length == 0) {
+				Logger.error("something went wrong scrapping the list");
+				return;
+			}
 			Logger.debug("search strings received");
+			Logger.debug(searchStrings);
 
 			await searchRepository.cleanUpKV(searchStrings);
 			Logger.debug("kv cleaned up");
