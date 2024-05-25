@@ -4,6 +4,8 @@ import { SpotifyAuth } from "./spotifyAuth";
 import Logger from "js-logger";
 import { initLogger } from "./logging";
 import { SearchRepository } from "./searchRepository";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GenAIHelper } from "./genAIHelper";
 
 /**
  * Welcome to Cloudflare Workers! This is your first scheduled worker.
@@ -34,11 +36,13 @@ export default {
 
 		const spotifyAuth = new SpotifyAuth(env.REFRESH_TOKEN, env.CLIENT_ID, env.CLIENT_SECRET);
 		const code = await spotifyAuth.getAccessToken();
+		const genAIApiKey: string = env.GEN_AI_API_KEY;
+		const genAIScrapper: GenAIHelper = new GenAIHelper(new GoogleGenerativeAI(genAIApiKey));
 
 		if (code != null) {
 			Logger.debug("access token received");
 
-			const scraper = new CanalFiestaScraper();
+			const scraper = new CanalFiestaScraper(genAIScrapper);
 			const spotifyApi = new SpotifyClient(code);
 			const searchRepository = new SearchRepository(spotifyApi, env.SONG_IDS);
 
