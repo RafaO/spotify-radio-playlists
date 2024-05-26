@@ -20,10 +20,10 @@ export class GenAIHelper {
         const model = this.genAI.getGenerativeModel({
           generationConfig: generationConfig,
           model: "gemini-1.5-flash",
+          systemInstruction: "Your response must be a text forming a list where each line is a song and its artist. Each line should contain the song title, followed by a comma, a blank space and then the artist. There should be no further information and no empty lines"
         });
     
-        const prompt = `Extract a list of songs from the following text. Respond only with a list of songs and artists, each on a new line, in the format: "song, artist".
-        Text: ${content}`;
+        const prompt = `Extract a list of songs from the following text. Text: ${content}`;
     
         const result = await model.generateContent(prompt);
         const response = result.response;
