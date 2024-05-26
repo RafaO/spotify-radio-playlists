@@ -22,7 +22,8 @@ export class GenAIHelper {
           model: "gemini-1.5-flash",
         });
     
-        const prompt = "Extract a list of songs from the following text, respond only with a list of songs and artists split by line in the format format song, artist" + content;
+        const prompt = `Extract a list of songs from the following text. Respond only with a list of songs and artists, each on a new line, in the format: "song, artist".
+        Text: ${content}`;
     
         const result = await model.generateContent(prompt);
         const response = result.response;
