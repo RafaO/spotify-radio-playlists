@@ -4,22 +4,26 @@ import { GenAIHelper } from './genAIHelper';
 
 export class CanalFiestaScraper {
   private genAIHelper: GenAIHelper;
+  private aiEnabled: Boolean;
 
-  constructor(genAIHelper: GenAIHelper) {
+  constructor(genAIHelper: GenAIHelper, aiEnabled: Boolean = false) {
     this.genAIHelper = genAIHelper;
+    this.aiEnabled = aiEnabled;
   }
 
   async scrapeList(url: string): Promise<string[]> {
     const response = await (await fetch(url)).text();
     const $ = load(response);
 
-    // try with AI
-    const strings: Array<string> = await this.genAIHelper.scrap($('body').text());
-    if (strings.length == 50) {
-      Logger.debug("AI scrapping extracted the songs");
-      return strings;
+    if (this.aiEnabled) {
+      // try with AI
+      const strings: Array<string> = await this.genAIHelper.scrap($('body').text());
+      if (strings.length == 50) {
+        Logger.debug("AI scrapping extracted the songs");
+        return strings;
+      }
+      Logger.debug("AI scrapping didn't work");
     }
-    Logger.debug("AI scrapping didn't work");
 
     // if it fails, try with the selectors
     const selectors = [
