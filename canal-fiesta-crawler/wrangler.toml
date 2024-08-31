@@ -1,6 +1,7 @@
 name = "canal-fiesta-crawler"
 main = "src/index.ts"
 compatibility_date = "2022-11-13"
+workers_dev = false
 
 kv_namespaces = [
     { binding = "SONG_IDS", id = "fcd8580780ff477a887325e58d45bc48", preview_id = "fd07312f364a4facb22e04306452e932"}
