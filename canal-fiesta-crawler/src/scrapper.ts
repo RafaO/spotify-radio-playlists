@@ -11,9 +11,16 @@ export class CanalFiestaScraper {
     this.aiEnabled = aiEnabled;
   }
 
-  async scrapeList(url: string): Promise<string[]> {
-    const response = await (await fetch(url)).text();
-    const $ = load(response);
+  async scrapeList(url: string): Promise<string[]> {    
+    const response = await fetch(url);
+    if (!response.ok) {
+      Logger.error(`error scrapping the url: ${response.status} - ${response.statusText}`);
+      Logger.error(`Headers: ${JSON.stringify([...response.headers])}`);
+      return [];
+    }
+    const responseText = await (response).text();
+
+    const $ = load(responseText);
 
     if (this.aiEnabled) {
       // try with AI
