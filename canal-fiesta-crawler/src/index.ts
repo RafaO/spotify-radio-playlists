@@ -9,8 +9,6 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GenAIHelper } from "./genAIHelper";
 import { AWSSecretsManager } from './aws/AWSSecretsManager';
 
-const url = 'https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html';
-
 export const handler: Handler = async (event, context) => {
 	initLogger(process.env.SENTRY_DSN || '', context);
 	Logger.debug("worker starting");
