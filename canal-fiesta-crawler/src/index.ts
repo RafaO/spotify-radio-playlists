@@ -8,6 +8,7 @@ import { SearchRepository } from "./searchRepository";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GenAIHelper } from "./genAIHelper";
 import { AWSSecretsManager } from './aws/AWSSecretsManager';
+import { CloudflareKVCache } from './cloudflare/KVCache';
 
 export const handler: Handler = async (event, context) => {
 	initLogger(process.env.SENTRY_DSN || '', context);
@@ -32,7 +33,8 @@ export const handler: Handler = async (event, context) => {
 
 		const scraper = new CanalFiestaScraper(genAIScrapper);
 		const spotifyApi = new SpotifyClient(code);
-		const searchRepository = new SearchRepository(spotifyApi, "env.SONG_IDS");
+		const KVCache = new CloudflareKVCache("env.SONG_IDS"); // not used for now as we are deploying to aws
+		const searchRepository = new SearchRepository(spotifyApi, null);
 
 		const searchStrings = await scraper.scrapeList("https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html");
 		if (searchStrings.length != 50 ) {

@@ -4,9 +4,9 @@ import { ICache } from "./ICache";
 
 export class SearchRepository {
     private spotifyClient: SpotifyClient;
-    private cache: ICache;
+    private cache: ICache | null;
 
-    constructor(spotifyClient: SpotifyClient, cache: ICache) {
+    constructor(spotifyClient: SpotifyClient, cache: ICache | null) {
         this.spotifyClient = spotifyClient;
         this.cache = cache;
     }
@@ -14,17 +14,17 @@ export class SearchRepository {
     async getSongIds(searchStrings: string[]): Promise<string[]> {
         const strings = new Array();
         for (const searchString of searchStrings) {
-            let songId = await this.getSongId(searchString, false);
+            let songId = await this.getSongId(searchString);
             strings.push(songId);
         }
 
         return strings;
     }
 
-    async getSongId(searchString: string, useCache: boolean): Promise<string | null> {
+    async getSongId(searchString: string): Promise<string | null> {
         let songId: string | null = null;
 
-        if (useCache) {
+        if (this.cache) {
             // Try to retrieve song ID from cache
             try {
                 songId = await this.cache.get(searchString);
@@ -40,7 +40,7 @@ export class SearchRepository {
         // If song ID not found in cache or cache not used, retrieve from Spotify API
         try {
             songId = await this.spotifyClient.searchSong(searchString) as string;
-            if (useCache) await this.cache.put(searchString, songId);
+            if (this.cache) await this.cache.put(searchString, songId);
             Logger.debug(`Song ID "${songId}" retrieved from Spotify API for search string "${searchString}"`);
         } catch (error) {
             Logger.error(`Error retrieving song ID from Spotify API for search string "${searchString}":`, error);
@@ -54,11 +54,13 @@ export class SearchRepository {
     }
 
     async cleanUpCache(keysToKeep: string[]): Promise<void> {
-        const cacheKeys = await this.cache.list();
+        if (this.cache) {
+            const cacheKeys = await this.cache.list();
 
-        const keysToDelete = cacheKeys.filter((key: { name: string; }) => !keysToKeep.includes(key.name));
-        Logger.debug(keysToDelete.map((key: { name: string; }) => key.name));
-
-        await Promise.all(keysToDelete.map((key: { name: string; }) => this.cache.delete(key.name)));
+            const keysToDelete = cacheKeys.filter((key: { name: string; }) => !keysToKeep.includes(key.name));
+            Logger.debug(keysToDelete.map((key: { name: string; }) => key.name));
+    
+            await Promise.all(keysToDelete.map((key: { name: string; }) => this.cache?.delete(key.name)));
+        }
     }
 }
