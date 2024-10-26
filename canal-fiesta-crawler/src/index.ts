@@ -7,7 +7,7 @@ import { initLogger } from "./logging";
 import { SearchRepository } from "./searchRepository";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GenAIHelper } from "./genAIHelper";
-import { AWSSecretsManager } from './AWSSecretsManager';
+import { AWSSecretsManager } from './aws/AWSSecretsManager';
 
 const url = 'https://www.canalsur.es/radio/programas/cuenta-atras/noticia/1305888.html';
 
