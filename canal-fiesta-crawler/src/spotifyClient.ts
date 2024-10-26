@@ -1,5 +1,15 @@
 import Logger from "js-logger";
 
+interface SpotifyTrack {
+    uri: string;
+}
+
+interface SpotifySearchResult {
+    tracks: {
+        items: SpotifyTrack[];
+    };
+}
+
 export class SpotifyClient {
 
     private _authToken: String;
@@ -15,7 +25,7 @@ export class SpotifyClient {
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Authorization", `Bearer ${this._authToken}`);
 
-        const requestOptions = {
+        const requestOptions: RequestInit = {
             method: 'GET',
             headers: myHeaders,
             redirect: 'follow'
@@ -23,7 +33,7 @@ export class SpotifyClient {
 
         try {
             const response = await fetch(`${url}&q=${encodeURIComponent(searchString)}`, requestOptions);
-            const result = await response.json();
+            const result = await response.json() as SpotifySearchResult;
             return result['tracks']['items'][0].uri;
         } catch (error) {
             Logger.error(error);
@@ -40,7 +50,7 @@ export class SpotifyClient {
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Authorization", `Bearer ${this._authToken}`);
 
-        var requestOptions = {
+        var requestOptions: RequestInit = {
             method: 'PUT',
             headers: myHeaders,
             redirect: 'follow',

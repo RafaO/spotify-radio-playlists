@@ -1,6 +1,6 @@
 import { Handler } from 'aws-lambda';
 import { CanalFiestaScraper } from "./scrapper";
-import { SpotifyClient } from "./spotifyCient";
+import { SpotifyClient } from "./spotifyClient";
 import { SpotifyAuth } from "./spotifyAuth";
 import Logger from "js-logger";
 import { initLogger } from "./logging";

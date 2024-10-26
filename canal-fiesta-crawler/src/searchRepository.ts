@@ -1,13 +1,14 @@
 import Logger from "js-logger";
-import { SpotifyClient } from "./spotifyCient";
+import { SpotifyClient } from "./spotifyClient";
+import { ICache } from "./ICache";
 
 export class SearchRepository {
     private spotifyClient: SpotifyClient;
-    private kv: KVNamespace;
+    private cache: ICache;
 
-    constructor(spotifyClient: SpotifyClient, kv: KVNamespace) {
+    constructor(spotifyClient: SpotifyClient, cache: ICache) {
         this.spotifyClient = spotifyClient;
-        this.kv = kv;
+        this.cache = cache;
     }
 
     async getSongIds(searchStrings: string[]): Promise<string[]> {
@@ -24,23 +25,22 @@ export class SearchRepository {
         let songId: string | null = null;
 
         if (useCache) {
-            // Try to retrieve song ID from Cloudflare KV
+            // Try to retrieve song ID from cache
             try {
-                songId = await this.kv.get(searchString);
+                songId = await this.cache.get(searchString);
                 if (songId) {
-                    Logger.debug(`Song ID "${songId}" found in Cloudflare KV for search string "${searchString}"`);
+                    Logger.debug(`Song ID "${songId}" found in cache for search string "${searchString}"`);
                     return songId;
                 }
             } catch (error) {
-                Logger.error(`Error retrieving song ID from Cloudflare KV for search string "${searchString}":`, error);
+                Logger.error(`Error retrieving song ID from cache for search string "${searchString}":`, error);
             }
         }
 
-        // If song ID not found in Cloudflare KV or cache not used, retrieve from Spotify API
+        // If song ID not found in cache or cache not used, retrieve from Spotify API
         try {
-            songId = await this.spotifyClient.searchSong(searchString);
-            if (useCache)
-                await this.kv.put(searchString, songId);
+            songId = await this.spotifyClient.searchSong(searchString) as string;
+            if (useCache) await this.cache.put(searchString, songId);
             Logger.debug(`Song ID "${songId}" retrieved from Spotify API for search string "${searchString}"`);
         } catch (error) {
             Logger.error(`Error retrieving song ID from Spotify API for search string "${searchString}":`, error);
@@ -53,12 +53,12 @@ export class SearchRepository {
         return songId;
     }
 
-    async cleanUpKV(keysToKeep: string[]): Promise<void> {
-        const kvKeys = (await this.kv.list()).keys;
+    async cleanUpCache(keysToKeep: string[]): Promise<void> {
+        const cacheKeys = await this.cache.list();
 
-        const keysToDelete = kvKeys.filter(key => !keysToKeep.includes(key.name));
-        Logger.debug(keysToDelete.map(key => key.name));
+        const keysToDelete = cacheKeys.filter((key: { name: string; }) => !keysToKeep.includes(key.name));
+        Logger.debug(keysToDelete.map((key: { name: string; }) => key.name));
 
-        await Promise.all(keysToDelete.map(key => this.kv.delete(key.name)));
+        await Promise.all(keysToDelete.map((key: { name: string; }) => this.cache.delete(key.name)));
     }
 }
