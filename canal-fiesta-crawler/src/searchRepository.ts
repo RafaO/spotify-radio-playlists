@@ -61,6 +61,7 @@ export class SearchRepository {
             Logger.debug(keysToDelete.map((key: { name: string; }) => key.name));
     
             await Promise.all(keysToDelete.map((key: { name: string; }) => this.cache?.delete(key.name)));
+            Logger.debug("kv cleaned up");
         }
     }
 }

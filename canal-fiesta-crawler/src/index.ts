@@ -45,8 +45,7 @@ export const handler: Handler = async (event, context) => {
 		Logger.debug("search strings received");
 		Logger.debug(searchStrings);
 
-		// await searchRepository.cleanUpKV(searchStrings);
-		// Logger.debug("kv cleaned up");
+		await searchRepository.cleanUpCache(searchStrings);
 
 		let songIds = await searchRepository.getSongIds(searchStrings);
 
