@@ -9,12 +9,13 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GenAIHelper } from "./genAIHelper";
 import { AWSSecretsManager } from './aws/AWSSecretsManager';
 import { CloudflareKVCache } from './cloudflare/KVCache';
+import { ISecretsManager } from './ISecretsManager';
 
 export const handler: Handler = async (event, context) => {
 	initLogger(process.env.SENTRY_DSN || '', context);
 	Logger.debug("worker starting");
 
-	const secretsManager = new AWSSecretsManager();
+	const secretsManager: ISecretsManager = new AWSSecretsManager();
 	const spotifySecrets = await secretsManager.getSecret();
 
 	if (!spotifySecrets) {
