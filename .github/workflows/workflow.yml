@@ -1,17 +1,44 @@
-# name: Spotify playlists CI
+name: Deploy Lambda to AWS for Spotify playlist
 
-# on:
-#   push:
-#     branches: [ main ]
+on:
+  push:
+    branches: [ main ]
 
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
-#     name: Deploy
-#     steps:
-#       - uses: actions/checkout@v3
-#       - name: Deploy
-#         uses: cloudflare/wrangler-action@v3
-#         with:
-#           apiToken: ${{ secrets.CF_API_TOKEN }}
-#           workingDirectory: "canal-fiesta-crawler"
+env:
+  AWS_REGION : us-east-1
+
+permissions:
+      id-token: write   # This is required for requesting the JWT
+      contents: read    # This is required for actions/checkout
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+              working-directory: ./canal-fiesta-crawler
+        steps:
+            - name: Git clone the repository
+              uses: actions/checkout@v3
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                node-version: '18'
+            - name: Install dependencies
+              run: npm install
+            - name: Package Lambda function
+              run: |
+                npm run build
+            - name: Configure aws credentials
+              uses: aws-actions/configure-aws-credentials@v1.7.0
+              with:
+                role-to-assume: arn:aws:iam::575730407396:role/GitHubAction-AssumeRoleDeployLambda
+                role-session-name: GitHub_to_AWS_via_FederatedOIDC
+                aws-region: ${{ env.AWS_REGION }}
+            - name: Sts GetCallerIdentity
+              run: |
+                aws sts get-caller-identity
+            - name: Deploy to Lambda
+              run: |
+                aws lambda update-function-code --function-name playlist-canal-fiesta \
+                                                --zip-file dist/index.zip
