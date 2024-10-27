@@ -30,7 +30,7 @@ jobs:
               run: |
                 npm run build
             - name: Configure aws credentials
-              uses: aws-actions/configure-aws-credentials@v1.7.0
+              uses: aws-actions/configure-aws-credentials@v4.0.2
               with:
                 role-to-assume: arn:aws:iam::575730407396:role/GitHubAction-AssumeRoleDeployLambda
                 role-session-name: GitHub_to_AWS_via_FederatedOIDC
