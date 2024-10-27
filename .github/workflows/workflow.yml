@@ -20,6 +20,12 @@ jobs:
         steps:
             - name: Git clone the repository
               uses: actions/checkout@v3
+            - name: Configure aws credentials
+              uses: aws-actions/configure-aws-credentials@v4.0.2
+              with:
+                role-to-assume: arn:aws:iam::575730407396:role/GitHubAction-AssumeRoleDeployLambda
+                role-session-name: GitHub_to_AWS_via_FederatedOIDC
+                aws-region: ${{ env.AWS_REGION }}
             - name: Set up Node.js
               uses: actions/setup-node@v3
               with:
@@ -29,12 +35,6 @@ jobs:
             - name: Package Lambda function
               run: |
                 npm run build
-            - name: Configure aws credentials
-              uses: aws-actions/configure-aws-credentials@v4.0.2
-              with:
-                role-to-assume: arn:aws:iam::575730407396:role/GitHubAction-AssumeRoleDeployLambda
-                role-session-name: GitHub_to_AWS_via_FederatedOIDC
-                aws-region: ${{ env.AWS_REGION }}
             - name: Sts GetCallerIdentity
               run: |
                 aws sts get-caller-identity
