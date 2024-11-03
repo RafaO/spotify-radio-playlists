@@ -1,5 +1,9 @@
 import Logger from "js-logger";
 
+interface AccessTokenResponse {
+    access_token: string;
+}
+
 export class SpotifyAuth {
 
     private _refreshToken: string;
@@ -12,7 +16,7 @@ export class SpotifyAuth {
         this._clientSecret = clientSecret;
     }
 
-    async getAccessToken(): Promise<String | null> {
+    async getAccessToken(): Promise<string | null> {
 		var myHeaders = new Headers();
 		myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 		
@@ -22,7 +26,7 @@ export class SpotifyAuth {
 		urlencoded.append("client_id", this._clientId);
 		urlencoded.append("client_secret", this._clientSecret);
 		
-		var requestOptions = {
+		var requestOptions: RequestInit = {
 		  method: 'POST',
 		  headers: myHeaders,
 		  body: urlencoded,
@@ -31,8 +35,7 @@ export class SpotifyAuth {
 
         try {
             Logger.debug("getting access token");
-            const response = await (await fetch("https://accounts.spotify.com/api/token", requestOptions)).json();
-            Logger.debug(response);
+            const response = await (await fetch("https://accounts.spotify.com/api/token", requestOptions)).json() as AccessTokenResponse;
             return response['access_token'];
         } catch (e) {
             Logger.error(e);
