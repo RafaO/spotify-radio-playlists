@@ -1,4 +1,4 @@
-resource "aws_lambda_function" "tfer--playlist-canal-fiesta" {
+resource "aws_lambda_function" "playlist-canal-fiesta" {
   architectures = ["x86_64"]
   description   = "Scrapes canal fiesta top 50 and updates a playlist in Spotify accordingly"
 
