@@ -3,5 +3,5 @@ canal-fiesta-crawler/.dev.vars
 canal-fiesta-crawler/dist
 
 **/.terraform/**
-*.tfstate
+*.tfstate**
 *.tfvars
