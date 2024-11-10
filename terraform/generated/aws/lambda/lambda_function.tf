@@ -5,6 +5,7 @@ resource "aws_lambda_function" "playlist-canal-fiesta" {
   environment {
     variables = {
       SENTRY_DSN = var.sentry_dsn
+      DB_NAME = var.db_name
     }
   }
 
