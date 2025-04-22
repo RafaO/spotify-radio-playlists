@@ -19,7 +19,7 @@ resource "aws_lambda_function" "playlist-canal-fiesta" {
   package_type                   = "Zip"
   reserved_concurrent_executions = "-1"
   role                           = "arn:aws:iam::575730407396:role/service-role/playlist-canal-fiesta-role-i16ivp0t"
-  runtime                        = "nodejs18.x"
+  runtime                        = "nodejs20.x"
   source_code_hash               = "2XUcqXYM91uoCKZm/rboHN/T1m7iSd1v12WRkD/MrHg="
 
   tags = {

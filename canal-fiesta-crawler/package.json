@@ -22,5 +22,8 @@
     "js-logger": "^1.6.1",
     "toucan-js": "^3.0.0"
   },
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }
