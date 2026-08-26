@@ -9,6 +9,9 @@ There are different versions depending on where it's deployed:
 
 ## Deploy
 
+Push to main and the github workflow will deploy.
+
+If you want to do it manually:
 - cd canal-fiesta-crawler
 - npm i
 - npm run build
